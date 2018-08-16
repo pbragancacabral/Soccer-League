@@ -1,84 +1,66 @@
 import csv
 
-PLAYERS = []
-EXPERIENCED_PLAYERS = []
-INEXPERIENCED_PLAYERS = []
-DRAGONS, SHARKS, RAPTORS = [], [], []
+CSV_FILE = "soccer_players.csv"
+CSV_DELIMITER = ","
+TEAMS_FILE = "teams.txt"
+GUARDIANS_TEMPLATE = """Dear {},
+{} is enrolled in the team {}.
+The first practice will take place at the Foo Bar High School, Friday at 12:34AM.
+"""
+
+players = []
+experienced_players = []
+inexperienced_players = []
+teams = {
+    "Sharks": [],
+    "Dragons": [],
+    "Raptors": []
+}
 
 
-def add_players_from_file_to_list():
-    players = []
-    with open("soccer_players.csv", newline="") as file:
-        reader = csv.DictReader(file, delimiter=",")
+def load_players():
+    with open(CSV_FILE, newline="") as file:
+        reader = csv.DictReader(file, delimiter=CSV_DELIMITER)
         rows = list(reader)
         for row in rows:
-            players += [row]
-    return players
+            players.append(row)
 
 
-def separate_by_experience(players):
-    experienced = []
-    inexperienced = []
+def divide_players_by_experience():
     for player in players:
         if player["Soccer Experience"] == "YES":
-            experienced += [player]
+            experienced_players.append(player)
         else:
-            inexperienced += [player]
-    return experienced, inexperienced
+            inexperienced_players.append(player)
 
 
-def assign_players_to_teams(experienced, inexperienced):
-    teams = []
-    for index, player in zip(range(len(experienced)), inexperienced):
-        teams = [DRAGONS, SHARKS, RAPTORS]
-        teams[index % 3] += [player]
-
-    for index, player in zip(range(len(experienced)), inexperienced):
-        teams = [DRAGONS, SHARKS, RAPTORS]
-        teams[index % 3] += [player]
-    return teams
+def assign_players_to_teams():
+    for i in range(len(experienced_players) // len(teams)):
+        for team in teams.values():
+            team.append(experienced_players.pop())
+            team.append(inexperienced_players.pop())
 
 
-def write_file_with_teams():
-    with open("teams.txt", "w") as file:
-        file.write("DRAGONS\n")
-        for player in DRAGONS:
-            file.write(f"{player['Name']}, {player['Soccer Experience']}, {player['Guardian Name(s)']}\n")
-        file.write("\n")
-
-        file.write("SHARKS\n")
-        for player in SHARKS:
-            file.write(f"{player['Name']}, {player['Soccer Experience']}, {player['Guardian Name(s)']}\n")
-        file.write("\n")
-
-        file.write("RAPTORS\n")
-        for player in RAPTORS:
-            file.write(f"{player['Name']}, {player['Soccer Experience']}, {player['Guardian Name(s)']}\n")
+def write_teams_file():
+    with open(TEAMS_FILE, "w") as file:
+        for team_name, team_list in teams.items():
+            file.write(f"{team_name}\n")
+            for player in team_list:
+                file.write(f"{player['Name']}, {player['Soccer Experience']}, {player['Guardian Name(s)']}\n")
+            file.write("\n")
 
 
-def write_individual_letters_to_guardians():
-    for player in DRAGONS:
-        first_name, last_name = player["Name"].split()
-        with open(f"{first_name}_{last_name}.txt", "w") as file:
-            file.write(f"Dear {player['Guardian Name(s)']}, {player['Name']} as been selected to play for DRAGONS with "
-                       "first practice next Sunday at 13:00")
-
-    for player in SHARKS:
-        first_name, last_name = player["Name"].split()
-        with open(f"{first_name}_{last_name}.txt", "w") as file:
-            file.write(f"Dear {player['Guardian Name(s)']}, {player['Name']} as been selected to play for SHARKS with "
-                       "first practice next Sunday at 13:00")
-
-    for player in RAPTORS:
-        first_name, last_name = player["Name"].split()
-        with open(f"{first_name}_{last_name}.txt", "w") as file:
-            file.write(f"Dear {player['Guardian Name(s)']}, {player['Name']} as been selected to play for RAPTORS with "
-                       "first practice next Sunday at 13:00")
+def write_guardians_file():
+    for team_name, team_list in teams.items():
+        for player in team_list:
+            first_name, last_name = player["Name"].split()
+            with open(f"{first_name}_{last_name}.txt", "w") as file:
+                file.write(GUARDIANS_TEMPLATE.format(player["Guardian Name(s)"], player["Name"], team_name))
 
 
 if __name__ == "__main__":
-    PLAYERS = add_players_from_file_to_list()
-    EXPERIENCED_PLAYERS, INEXPERIENCED_PLAYERS = separate_by_experience(PLAYERS)
-    DRAGONS, SHARKS, RAPTORS = assign_players_to_teams(EXPERIENCED_PLAYERS, INEXPERIENCED_PLAYERS)
-    write_file_with_teams()
-    write_individual_letters_to_guardians()
+    load_players()
+    divide_players_by_experience()
+    assign_players_to_teams()
+    write_teams_file()
+    write_guardians_file()
