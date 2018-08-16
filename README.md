@@ -1,7 +1,7 @@
 # Soccer League 
 ## Synopsis
 Soccer League is a command-line application that divides 18 soccer players into 3 even teams based on the player's experience. It generates an output file with the 3 teams and their players plus a file for each player with an individual invitation.
-### Pre-requisites
+### Prerequisites
 ```
 - Python
 ```
