@@ -13,6 +13,6 @@ python soccer_league.py
 ## Built with
 * [Python](https://www.python.org/)
 ## Author
-* [**Pedro de Bragança Cabral**](https://github.com/pbragancacabral)
+* [**Pedro de Bragança Cabral**](https://www.linkedin.com/in/pbragancacabral/)
 ## Acknowledgments
 * Treehouse
