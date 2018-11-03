@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import csv
 
 CSV_FILE = "soccer_players.csv"
