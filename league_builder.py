@@ -65,9 +65,13 @@ def write_guardians_file():
                 file.write(GUARDIANS_TEMPLATE.format(player["Guardian Name(s)"], player["Name"], team_name))
 
 
-if __name__ == "__main__":
+def run():
     load_players()
     divide_players_by_experience()
     assign_players_to_teams()
     write_teams_file()
     write_guardians_file()
+
+
+if __name__ == "__main__":
+    run()
